@@ -1,0 +1,13 @@
+% Code runs on MATLAB 2022b, editted and debugged by Ruiqi, 22, April, 2024. 
+
+clear 
+clc
+
+alpha=0.2;
+beta=3;
+
+ma=(1-alpha)/(beta-alpha);
+mb=1-ma;
+
+T1=gamma(ma)*gamma(mb)/(beta-alpha);
+disp(T1);
