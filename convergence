@@ -1,10 +1,12 @@
-clear all 
+% Code runs on MATLAB 2022b, editted and debugged by Ruiqi, 22, April, 2024. 
+
+clear
 clc
 
 tic
-%***********迭代设置**************
-step_length=0.000001;
-task_time=2;
+%***********iteration settings**************
+step_length=0.00001;
+task_time=10;
 if step_length==0.00001
     count=floor(task_time/step_length+2);
 else
@@ -15,8 +17,8 @@ tspan=0:step_length:task_time;
 theta=[0;2;1];
 theta_vec=[0;0;0;0;0];
 xi=1;
-gamma=0.001;
-rho=0.01;
+gamma=0.1;
+rho=0.1;
 
 end_effector=zeros(count,2);
 vel=zeros(count,3);
@@ -29,7 +31,7 @@ dxi_arr=zeros(count,1);
 matrix_error=zeros(count,1);
 %********************************
 
-%**********机械臂设置*************
+%**********manipulator settings*************
 arm1=1;
 arm2=1;
 arm3=1;
@@ -40,7 +42,8 @@ for i=1:1:count
     t=(i-1)*step_length;
 
 theta=theta+theta_vec(1:3,1)*step_length;
-%**************************系数矩阵*****************************************
+
+%**************************coefficient matrix*****************************************
     P=[1,0,0,-arm1*sin(theta(1,:)),arm1*cos(theta(1,:));
        0,1,0,-arm2*sin(theta(2,:)),arm2*cos(theta(2,:));
        0,0,1,-arm3*sin(theta(3,:)),arm3*cos(theta(3,:));
@@ -64,11 +67,11 @@ theta=theta+theta_vec(1:3,1)*step_length;
 
 %**************************************************************************
 terror=P*theta_vec-q; 
-error=0.5*norm(terror);
+error=0.5*norm(terror)^2;
 dxi=(error+error/(gamma*error+rho));
 xi=xi+dxi*step_length;
 
-theta_acc=((-P'*terror)/(norm(P'*terror)^2+1e-8)).*(xi*(error^1.3+norm(P)*error^0.5+error^0.7)+terror'*(dP*theta_vec-dq))+50*cos(100*t);
+theta_acc=((-P'*terror)/(norm(P'*terror)^2+1e-6)).*(xi*(error^3+norm(P)*error^0.5+error^0.2)+terror'*(dP*theta_vec-dq));
 theta_vec=theta_vec+theta_acc*step_length;
 
 end_effector(i,1)=cos(theta(1,1))+cos(theta(2,1))+cos(theta(3,1));
@@ -90,21 +93,7 @@ dxi_arr(i,1)=dxi;
 end
 toc
 
-% figure
-% hold on
-% grid on
-% box on
-% subplot(3,1,1)
-% plot(tspan',angle(:,1),'m','LineWidth',2);
-% subplot(3,1,2)
-% plot(tspan',angle(:,2),'b','LineWidth',2);
-% subplot(3,1,3)
-% plot(tspan',angle(:,3),'g','LineWidth',2);
-% legend({'${\theta_1(t)}$','${\theta_2(t)}$','${\theta_3(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location','NorthEast');
-% set(gca, 'LooseInset', [0,0,0,0]);
-% set(gca, 'FontName', 'Times New Roman','FontSize',12,'LineWidth', 1.5);
-
-
+%******************plot*****************************
 arm1_end=[cos(angle(:,1)),sin(angle(:,1))];
 arm2_end=[cos(angle(:,1))+cos(angle(:,2)),sin(angle(:,1))+sin(angle(:,2))];
 arm3_end=[cos(angle(:,1))+cos(angle(:,2))+cos(angle(:,3)),sin(angle(:,1))+sin(angle(:,2))+sin(angle(:,3))];
@@ -124,9 +113,9 @@ set(gca, 'LooseInset', [0,0,0,0]);
 set(gca,'FontName','Times New Roman','FontSize',12,'LineWidth',2);
 legend({'Desired path','Link 1','Link 2','Link 3','End-effector'}, 'Interpreter', 'latex', 'FontSize', 14, 'location','NorthEast');
 
-%%%%%%%%%%%%%%%%%%%%%%%%
+
 figure
-subplot('Position', [0.06, 0.7, 0.94, 0.25]); % 调整位置和大小
+subplot('Position', [0.06, 0.7, 0.92, 0.25]); 
 plot(tspan',angle(:,1),'m','LineWidth',2);
 hold on;
 grid on;
@@ -134,7 +123,7 @@ legend({'${\theta_1(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
-subplot('Position', [0.06, 0.38, 0.94, 0.25]); % 调整位置和大小
+subplot('Position', [0.06, 0.38, 0.92, 0.25]); 
 plot(tspan',angle(:,2),'b','LineWidth',2);
 hold on
 grid on
@@ -142,70 +131,51 @@ legend({'${\theta_2(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
-subplot('Position', [0.06, 0.06, 0.94, 0.25]); % 调整位置和大小
+subplot('Position', [0.06, 0.06, 0.92, 0.25]); 
 plot(tspan',angle(:,3),'g','LineWidth',2);
 hold on
 grid on
-text(16.5,0.2,'time (s)','FontSize',14);
+text(9,0.2,'time (s)','FontSize',14);
 legend({'${\theta_3(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
-% figure
-% hold on
-% plot(ro(:,1),ro(:,2),'g','LineWidth',2);
-% for j=(count+1)/2:(task_time/(100*step_length)):count+1
-%     line([0,arm1_end(j,1)],[0,arm1_end(j,2)],'Color','c')
-%     hold on
-%     line([arm1_end(j,1),arm2_end(j,1)],[arm1_end(j,2),arm2_end(j,2)],'Color','b')
-%     line([arm2_end(j,1),arm3_end(j,1)],[arm2_end(j,2),arm3_end(j,2)],'Color','m')
-%     plot(arm3_end(j,1),arm3_end(j,2),'p','Color','r');
-% end
-% box on;
-% grid on;
-% set(gca, 'LooseInset', [0,0,0,0]);
-% set(gca,'FontName','Times New Roman','FontSize',12,'LineWidth',2);
-% legend({'Desired path','Link 1','Link 2','Link 3','End-effector'}, 'Interpreter', 'latex', 'FontSize', 14, 'location','NorthEast');
-
-
 
 figure
-subplot('Position', [0.06, 0.58, 0.94, 0.4]); % 调整位置和大小
+subplot('Position', [0.06, 0.58, 0.92, 0.4]); 
 plot(tspan',matrix_error,'m','LineWidth',2);
 hold on;
 grid on;
-text(16.5,0.2,'time (s)','FontSize',14);
+text(9,0.2,'time (s)','FontSize',14);
 legend({'${\mathcal{E}(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
-subplot('Position', [0.06, 0.06, 0.94, 0.4]); % 调整位置和大小
+subplot('Position', [0.06, 0.06, 0.92, 0.4]); 
 plot(tspan',res(:,1),'b','LineWidth',2);
 hold on
 grid on
-text(16.5,0.2,'time (s)','FontSize',14);
+text(9,0.2,'time (s)','FontSize',14);
 legend({'${\Vert f(t)-r(t)\Vert}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
 
 figure
-subplot('Position', [0.06, 0.58, 0.94, 0.4]); % 调整位置和大小
+subplot('Position', [0.06, 0.58, 0.92, 0.4]);
 plot(tspan',xi_arr,'m','LineWidth',2);
 hold on;
 grid on;
-text(16.5,1,'time (s)','FontSize',14);
+text(9,1,'time (s)','FontSize',14);
 legend({'${\xi(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
-subplot('Position', [0.06, 0.06, 0.94, 0.4]); % 调整位置和大小
+subplot('Position', [0.06, 0.06, 0.92, 0.4]); 
 plot(tspan',dxi_arr,'b','LineWidth',2);
 hold on
 grid on
-text(16.5,1,'time (s)','FontSize',14);
+text(9,1,'time (s)','FontSize',14);
 legend({'${\dot{\xi}(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
-
-
