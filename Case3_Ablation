@@ -118,7 +118,7 @@ hold on;
 plot(tspan',matrix_error(:,2),'b','LineWidth',2);
 grid on;
 text(9,1,'time (s)','FontSize',14);
-legend({'AIFNA with ${\xi(t)}$','AIFNA without ${\xi(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
+legend({'SAINA with ${\xi(t)}$','SAINA without ${\xi(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
 
@@ -128,6 +128,6 @@ hold on;
 plot(tspan',matrix_error(:,4),'b','LineWidth',2);
 grid on
 text(9,1,'time (s)','FontSize',14);
-legend({'AIFNA with ${\xi(t)}$','AIFNA without ${\xi(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
+legend({'SAINA with ${\xi(t)}$','SAINA without ${\xi(t)}$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
 set(gca, 'LooseInset', [0,0,0,0]);
 set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
