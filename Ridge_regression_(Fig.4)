@@ -1,0 +1,86 @@
+%Start by running the uncommented code. Adjust the dimension m and the corresponding 
+% label until m=1000. Next, comment out the code above and run the code that was originally 
+% commented to draw Fig. 4 of our revised paper.
+
+label=1;
+m=10;   %This is the dimension of H
+
+step_length=0.00001;
+gamma=0.1;
+rho=0.1;
+xi=1;
+t=1:1:50001;
+
+H=rand(m,m)/50;
+
+%if m=500, then "/300", if m=1000, then "/500"，if m=200, then "/80",else "/50"
+% This aims to ensure that the calculated residuals do not exceed the upper limit of MATLAB's
+% storage of one number, thus preventing the occurrence of #NAN values
+
+I=rand(m,1);
+C=H'*H+eye(m);
+d=2*H'*I;
+K=norm(C);
+
+% After the first execution, delete the following codes
+error_plot=zeros(50001,9);
+xi_plot=zeros(50001,9);
+dxi_plot=zeros(50001,9);
+y=zeros(m,1);
+%******************************************************
+
+for i=1:1:50001
+terror=C*y-d; 
+error=0.5*norm(terror)^2;
+dxi=error+error/(gamma*error+rho);
+xi=xi+dxi*step_length;
+dy=((-C'*terror)/(norm(C'*terror)^2+1e-6))*(xi*(error^3+K*error^0.5+error^0.2));
+y=y+dy*step_length;
+xi_plot(i,label)=xi;
+dxi_plot(i,label)=dxi;
+error_plot(i,label)=error;
+end
+y=y+dy*step_length;
+
+figure
+plot(t,(log10(error_plot(:,label))),'b')
+figure
+plot(t,xi_plot(:,label),'r')
+
+% figure
+% hold on
+% grid on
+% box on
+% t=0:0.0001:5;
+% for i=1:1:9
+%     plot(t',log10(error_plot(:,i)),'LineWidth',2);
+% end
+% legend({'$n=10$','$n=20$','$n=50$','$n=100$','$n=120$','$n=150$','$n=200$','$n=500$','$n=1000$'}, 'Interpreter', 'latex', 'FontSize', 14, 'location', 'NorthEast');
+% set(gca, 'LooseInset', [0,0,0,0]);
+% set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
+% text(4,-27,'time (s)','FontSize',14);
+% 
+% 
+% figure
+% subplot('Position', [0.06, 0.58, 0.92, 0.4]);
+% hold on;
+% for i=1:1:9
+%     plot(t',xi_plot(:,i),'LineWidth',2);
+% end
+% grid on;
+% box on;
+% text(4,1.3,'time (s)','FontSize',14);
+% legend({'$n=10$','$n=20$','$n=50$','$n=100$','$n=120$','$n=150$','$n=200$','$n=500$','$n=1000$'}, 'Interpreter', 'latex', 'FontSize', 10, 'location', 'NorthEast');
+% set(gca, 'LooseInset', [0,0,0,0]);
+% set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
+% 
+% subplot('Position', [0.06, 0.06, 0.92, 0.4]); 
+% hold on;
+% for i=1:1:9
+%     plot(t',log10(dxi_plot(:,i)),'LineWidth',2);
+% end
+% grid on
+% box on
+% text(4,-27,'time (s)','FontSize',14);
+% set(gca, 'LooseInset', [0,0,0,0]);
+% set(gca, 'FontName', 'Times New Roman', 'FontSize',12,'LineWidth', 1.5);
