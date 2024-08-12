@@ -1,0 +1,71 @@
+clear all
+clc
+
+step_length=0.00001;
+gamma=0.1;
+rho=0.1;
+
+m=10;   %This is the dimension of H
+time=zeros(3,10);
+
+for num=1:1:10
+H=rand(m,m)/50;
+%if m=500, then "/300", if m=1000, then "/500"，if m=200, then "/80",else "/50"
+% This aims to ensure that the calculated residuals do not exceed the upper limit of MATLAB's
+% storage of one number, thus preventing the occurrence of #NAN values
+
+
+I=rand(m,1);
+C=H'*H+eye(m);
+d=2*H'*I;
+K=norm(C);
+
+for label=1:1:3
+xi=1;
+y=zeros(m,1);
+
+tic
+for i=1:1:1000
+
+if label==1
+terror=C*y-d; 
+error=0.5*norm(terror)^2;
+dxi=(error+error/(gamma*error+rho));
+xi=xi+dxi*step_length;
+dy=((-C'*terror)/(norm(C'*terror)^2+1e-6))*(xi*(error^3+K*error^0.5+error^0.2));
+end
+
+if label==2
+terror=C*y-d; 
+dy=-C\((abs(terror).^3+K*abs(terror).^0.5+abs(terror).^0.2).*sign(terror));
+end
+
+if label==3
+terror=C*y-d; 
+error=0.5*norm(terror)^2;
+dxi=(error+error/(gamma*error+rho));
+xi=xi+dxi*step_length;
+dy=-C\(xi*(abs(terror).^3+K*abs(terror).^0.5+abs(terror).^0.2).*sign(terror));
+end
+
+y=y+dy*step_length;
+end
+disp(i)% ensure completeing 1000 iterations
+time(label,num)=toc;
+disp('*');
+end
+
+clear H I K;
+end
+
+t_average=zeros(3,1);
+max_cha=zeros(3,1);
+for k=1:1:3
+    t_average(k,1)=sum(time(k,2:10))/9;
+    max_cha(k,1)=max(abs(time(k,2:10)-t_average(k,1)));
+end
+disp('Mean value of executing time')
+disp(t_average)
+disp('The difference between the largest outlier and the mean')
+disp(max_cha)
+
