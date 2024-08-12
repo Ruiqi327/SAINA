@@ -13,7 +13,7 @@ Convergence validation with link length: Link1=1.2m, Link2=1m, Link3=0.8m in t �
 The codes are shown in "Supplemented".
 
 ## Is the abnormal outliers of the runtime when the program start running a fact?
-Facts, of course! We never do false work！ We hereby provides some running figures. Videos are shown in "Video".
+Facts, of course! We never do false work！ We hereby provide some running figures. Videos are shown in "Video".
 
 ![image](https://github.com/user-attachments/assets/6ab3ea47-45d2-4154-b84d-9b9a9e551b4b)
 ![image](https://github.com/user-attachments/assets/ffc5b9bb-d919-4220-9dd7-6cc9a156917b)
