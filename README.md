@@ -9,4 +9,4 @@ All codes are edited by Ruiqi Zhou, which are completely open sourced and can be
   pages={1-1},
   doi={10.1109/LCSYS.2024.3449287}}
 ```
-If you have any problem reading this code, feel free to e-mail me at zhouruiqi@stu.scu.edu.cn, and I am also looking forward to coordination with you! 
+If you have any problem reading this code, feel free to e-mail me at zhouruiqi@stu.scu.edu.cn, and I am also looking forward to cooperation with you! 
