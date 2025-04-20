@@ -19,7 +19,7 @@ H=rand(m,m)/50;
 
 I=rand(m,1);
 C=H'*H+eye(m);
-d=2*H'*I;
+d=H'*I;
 K=norm(C);
 
 % After the first execution, delete the following codes
